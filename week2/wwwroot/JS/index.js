@@ -169,7 +169,7 @@ function buildLocationTable({paths:currentPatientLocations }, columnNames, colum
         buildLocationTable(currentPatientLocations, columnNames, columnKeys);
     }
 
-    function addLocation(currentPatientLocations, locations, columnKeys, patientId) {
+    function addLocation(currentPatientLocations, columnKeys, patientId) {
         const startDateInp = document.getElementById("startDateInp");
         const endDateInp = document.getElementById("endDateInp");
         const cityInp = document.getElementById("cityInp");
@@ -198,13 +198,10 @@ function buildLocationTable({paths:currentPatientLocations }, columnNames, colum
         }
         else {
             const newLocation = {
-                patientId: patientId,
-                locationdetails: {
                     startDate: startDateInp.value.toString(),
                     endDate: endDateInp.value.toString(),
                     city: cityInp.value,
                     location: locationInp.value
-                }
             };
 
 
@@ -213,7 +210,6 @@ function buildLocationTable({paths:currentPatientLocations }, columnNames, colum
 
             //add location to data
             currentPatientLocations.push(newLocation);
-            locations.push(newLocation);
 
         }
 

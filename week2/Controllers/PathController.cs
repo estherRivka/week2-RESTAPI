@@ -40,156 +40,158 @@ namespace week2.Controllers
             _mapper = mapper;
             _linkGenerator = linkGenerator;
         }
-
-        [HttpGet]
-
-        public ActionResult<List<PathModel>> Get()
-        {
-
-            try
-            {
-                List<Path> paths = DataFormat.GetAllPaths();
-                if (paths != null && !paths.Any()) return NotFound("Couldn't find any paths");
-
-                return _mapper.Map<List<PathModel>>(paths);
-            }
-            catch (Exception)
-            {
-
-                return StatusCode(StatusCodes.Status500InternalServerError, "Failed to get Paths");
-            }
-        }
-
-        [HttpGet("{city}")]
-        public ActionResult<List<PathModel>> Get(string city)
-        {
-            try
-            {
-                List<Path> paths = DataFormat.GetAllPaths();
-                if (paths != null && !paths.Any())
-                    return NotFound("Couldn't find any paths");
-                List<Path> sortedPath = paths.FindAll(path => path.City == city);
-                if (sortedPath != null && !sortedPath.Any())
-                    return NotFound($"Couldn't find any paths in city {city}");
-                return _mapper.Map<List<PathModel>>(sortedPath);
-            }
-            catch (Exception)
-            {
-                return StatusCode(StatusCodes.Status500InternalServerError, "Failed to get Paths");
-            }
-        }
     }
 }
 
-      /*  [HttpGet]        
+//        [HttpGet]
 
-        // GET: api/Path/5
-        [HttpGet("{id:int}")]
-        public ActionResult<PatientModel> Get(int id)
-        {
-            try
-            {
-                Patient patient = patients
-                    .Find(patient => patient.Id == id);
+//        public ActionResult<List<PathModel>> Get()
+//        {
 
-                if (patient == null)
-                {
-                    return NotFound($"patient with id:{id} was not found");
-                }
-               return _mapper.Map<PatientModel>(patient);
-            }
-            catch (Exception)
-            {
-                return this.StatusCode(StatusCodes.Status500InternalServerError, "Database Failure while retrieving patient");
-            }
+//            try
+//            {
+//                List<Path> paths = DataFormat.GetAllPaths();
+//                if (paths != null && !paths.Any()) return NotFound("Couldn't find any paths");
 
-        }
+//                return _mapper.Map<List<PathModel>>(paths);
+//            }
+//            catch (Exception)
+//            {
 
-        // POST: api/Path
-        [HttpPost]
-        public ActionResult<PatientModel> Post( PatientModel newPatient)
-        {
-            try
-            {
-                bool exists = patients
-                    .Exists(patient => patient.Id == newPatient.PatientId);
-                if (exists == true)
-                {
-                    return BadRequest($"patient with id:{newPatient.PatientId} already exists");
-                }
+//                return StatusCode(StatusCodes.Status500InternalServerError, "Failed to get Paths");
+//            }
+//        }
 
-                var newPatientURI = _linkGenerator.GetPathByAction(HttpContext,
-                  "Get",
-                  values: new { id = newPatient.PatientId });
+//        [HttpGet("{city}")]
+//        public ActionResult<List<PathModel>> Get(string city)
+//        {
+//            try
+//            {
+//                List<Path> paths = DataFormat.GetAllPaths();
+//                if (paths != null && !paths.Any())
+//                    return NotFound("Couldn't find any paths");
+//                List<Path> sortedPath = paths.FindAll(path => path.City == city);
+//                if (sortedPath != null && !sortedPath.Any())
+//                    return NotFound($"Couldn't find any paths in city {city}");
+//                return _mapper.Map<List<PathModel>>(sortedPath);
+//            }
+//            catch (Exception)
+//            {
+//                return StatusCode(StatusCodes.Status500InternalServerError, "Failed to get Paths");
+//            }
+//        }
+//    }
+//}
 
-                if (string.IsNullOrWhiteSpace(newPatientURI))
-                {
-                    return BadRequest("Could not use current patientId");
-                }
+// [HttpGet]        
 
-                // Create a new Camp
-                Patient patient = _mapper.Map<Patient>(newPatient);
-                patients.Add(patient);
-              
-                    return Created(newPatientURI, _mapper.Map<PatientModel>(patient));
-                
+// GET: api/Path/5
+//        [HttpGet("{id:int}")]
+//        public ActionResult<PatientModel> Get(int id)
+//        {
+//            try
+//            {
+//                Patient patient = patients
+//                    .Find(patient => patient.Id == id);
 
-            }
-            catch (Exception e)
-            {
-                return this.StatusCode(StatusCodes.Status500InternalServerError, "Database Failure while creating new patient");
-            }
+//                if (patient == null)
+//                {
+//                    return NotFound($"patient with id:{id} was not found");
+//                }
+//               return _mapper.Map<PatientModel>(patient);
+//            }
+//            catch (Exception)
+//            {
+//                return this.StatusCode(StatusCodes.Status500InternalServerError, "Database Failure while retrieving patient");
+//            }
 
-        }
-    
+//        }
 
-        // PUT: api/Path/5
-        [HttpPut("{id:int}")]
-        public ActionResult<PatientModel> Put(int id, PatientModel updatedPatient)
-        {
-            try
-            {
-                Patient patientToUpdate = patients
-                    .Find(patient => patient.Id == id);
+//        // POST: api/Path
+//        [HttpPost]
+//        public ActionResult<PatientModel> Post( PatientModel newPatient)
+//        {
+//            try
+//            {
+//                bool exists = patients
+//                    .Exists(patient => patient.Id == newPatient.PatientId);
+//                if (exists == true)
+//                {
+//                    return BadRequest($"patient with id:{newPatient.PatientId} already exists");
+//                }
 
-                if (patientToUpdate == null)
-                {
-                    return NotFound($"patient with id:{id} was not found");
-                }
-                _mapper.Map(updatedPatient, patientToUpdate);
-                return _mapper.Map<PatientModel>(patientToUpdate);
-            }
-            catch (Exception)
-            {
+//                var newPatientURI = _linkGenerator.GetPathByAction(HttpContext,
+//                  "Get",
+//                  values: new { id = newPatient.PatientId });
 
-                return this.StatusCode(StatusCodes.Status500InternalServerError, "Database Failure while retrieving patient");
-            }
- 
-             
-        }
+//                if (string.IsNullOrWhiteSpace(newPatientURI))
+//                {
+//                    return BadRequest("Could not use current patientId");
+//                }
 
-        // DELETE: api/ApiWithActions/5
-        [HttpDelete("{id:int}")]
-        public ActionResult Delete(int id)
-        {
-            try
-            {
-                Patient patient = patients.Find(patient => patient.Id == id);
-                if (patient == null)
-                {
-                    return BadRequest($"patient with id:{id} does not exist");
-                }
+//                // Create a new Camp
+//                Patient patient = _mapper.Map<Patient>(newPatient);
+//                patients.Add(patient);
 
-                patients.Remove(patient);
-                return Ok();
-            }
-            catch (Exception)
-            {
+//                    return Created(newPatientURI, _mapper.Map<PatientModel>(patient));
 
-                return this.StatusCode(StatusCodes.Status500InternalServerError, "Database Failure while deleting patient");
-            }
-           
-        }
 
-    }
-}
+//            }
+//            catch (Exception e)
+//            {
+//                return this.StatusCode(StatusCodes.Status500InternalServerError, "Database Failure while creating new patient");
+//            }
+
+//        }
+
+
+//        // PUT: api/Path/5
+//        [HttpPut("{id:int}")]
+//        public ActionResult<PatientModel> Put(int id, PatientModel updatedPatient)
+//        {
+//            try
+//            {
+//                Patient patientToUpdate = patients
+//                    .Find(patient => patient.Id == id);
+
+//                if (patientToUpdate == null)
+//                {
+//                    return NotFound($"patient with id:{id} was not found");
+//                }
+//                _mapper.Map(updatedPatient, patientToUpdate);
+//                return _mapper.Map<PatientModel>(patientToUpdate);
+//            }
+//            catch (Exception)
+//            {
+
+//                return this.StatusCode(StatusCodes.Status500InternalServerError, "Database Failure while retrieving patient");
+//            }
+
+
+//        }
+
+//        // DELETE: api/ApiWithActions/5
+//        [HttpDelete("{id:int}")]
+//        public ActionResult Delete(int id)
+//        {
+//            try
+//            {
+//                Patient patient = patients.Find(patient => patient.Id == id);
+//                if (patient == null)
+//                {
+//                    return BadRequest($"patient with id:{id} does not exist");
+//                }
+
+//                patients.Remove(patient);
+//                return Ok();
+//            }
+//            catch (Exception)
+//            {
+
+//                return this.StatusCode(StatusCodes.Status500InternalServerError, "Database Failure while deleting patient");
+//            }
+
+//        }
+
+//    }
+//}
