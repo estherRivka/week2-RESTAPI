@@ -37,7 +37,7 @@ function getLocationsByPatientId(currentPatientId, url) {
                 reject("an error accured retrieving data");
             }
         }
-        xhttp.open("GET", "patient/1");
+        xhttp.open("GET", "path/1");
         xhttp.send();
     });
 
@@ -104,7 +104,7 @@ function configurePage(columnNames, columnKeys, patientURL ) {
        
     
 
-    function buildLocationTable(currentPatientLocations, columnNames, columnKeys) {
+function buildLocationTable({paths:currentPatientLocations }, columnNames, columnKeys) {
         const columnCount = columnNames.length;
 
         //Get add new location inputs.
@@ -149,7 +149,7 @@ function configurePage(columnNames, columnKeys, patientURL ) {
 
         for (let key of columnKeys) {
             let cell = row.insertCell(-1);
-            cell.innerHTML = newLocation.locationdetails[key];
+            cell.innerHTML = newLocation[key];
         }
         const deleteCell = row.insertCell(-1);
         const deleteBtn = document.createElement("BUTTON");   // Create a <button> element
@@ -164,7 +164,7 @@ function configurePage(columnNames, columnKeys, patientURL ) {
     
     function sortLocationTableByColumn(currentPatientLocations, columnNames, columnKeys, columnIndex) {
         const sortByKey = columnKeys[columnIndex];
-        currentPatientLocations.sort((a, b) => a.locationdetails[sortByKey].localeCompare(b.locationdetails[sortByKey]));
+        currentPatientLocations.sort((a, b) => a[sortByKey].localeCompare(b[sortByKey]));
 
         buildLocationTable(currentPatientLocations, columnNames, columnKeys);
     }
