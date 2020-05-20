@@ -37,15 +37,39 @@ function getLocationsByPatientId(currentPatientId, url) {
                 reject("an error accured retrieving data");
             }
         }
-        xhttp.open("GET", "path/1");
+        xhttp.open("GET", `${url}/${currentPatientId}`);
+        //xhttp.open("GET", "path/1");
         xhttp.send();
     });
 
 };
 
+function updatePatient(updatedPatient, url) {
+
+    var xhttp = new XMLHttpRequest();
+
+    return new Promise((resolve, reject) => {
+
+        xhttp.onreadystatechange = function () {
+            if (this.readyState == 4 && this.status == 200) {
+                resolve(JSON.parse(this.responseText));
+            }
+            if (this.readyState == 4 && this.status !== 200) {
+                reject("an error accured updating");
+            }
+        }
+        xhttp.open("PUT", "patient");
+        xhttp.setRequestHeader('Content-Type', 'application/json' );
+        xhttp.setRequestHeader('Accept', 'application/json');
+        xhttp.send(JSON.stringify(updatedPatient))
+    });
+
+};
+
+let currentPatient = null;
 configurePage(columnNames, columnKeys, patientURL)
 function configurePage(columnNames, columnKeys, patientURL ) {
-    let currentPatientLocations = [];
+ 
     const patientIdInp = document.getElementById("patientIdInp");
     let patientId;
     if (patientIdInp !== null) {
@@ -64,9 +88,9 @@ function configurePage(columnNames, columnKeys, patientURL ) {
 
     if (viewLocationTableBtn !== null) {
         viewLocationTableBtn.addEventListener("click",async function () {
-            currentPatientLocations.length = 0;
-            currentPatientLocations = await getLocationsByPatientId(patientId, patientURL);
-            buildLocationTable(currentPatientLocations, columnNames, columnKeys);
+            //currentPatientLocations.length = 0;
+            currentPatient = await getLocationsByPatientId(patientId, patientURL);
+            buildLocationTable(currentPatient.paths, columnNames, columnKeys);
             SetViewLocationBtnAvailability(false);
         });
     }
@@ -74,7 +98,7 @@ function configurePage(columnNames, columnKeys, patientURL ) {
     const addLocationBtn = document.getElementById("addLocationBtn");
     if (addLocationBtn !== null) {
         addLocationBtn.addEventListener("click", function () {
-            addLocation(currentPatientLocations, locations, columnKeys, patientId);
+            addLocation(currentPatient, columnKeys);
         });
     }
 
@@ -104,7 +128,7 @@ function configurePage(columnNames, columnKeys, patientURL ) {
        
     
 
-function buildLocationTable({paths:currentPatientLocations }, columnNames, columnKeys) {
+function buildLocationTable(currentPatientLocations, columnNames, columnKeys) {
         const columnCount = columnNames.length;
 
         //Get add new location inputs.
@@ -169,7 +193,7 @@ function buildLocationTable({paths:currentPatientLocations }, columnNames, colum
         buildLocationTable(currentPatientLocations, columnNames, columnKeys);
     }
 
-    function addLocation(currentPatientLocations, locations, columnKeys, patientId) {
+async function addLocation(currentPatient, columnKeys) {
         const startDateInp = document.getElementById("startDateInp");
         const endDateInp = document.getElementById("endDateInp");
         const cityInp = document.getElementById("cityInp");
@@ -198,22 +222,22 @@ function buildLocationTable({paths:currentPatientLocations }, columnNames, colum
         }
         else {
             const newLocation = {
-                patientId: patientId,
-                locationdetails: {
-                    startDate: startDateInp.value.toString(),
-                    endDate: endDateInp.value.toString(),
+                    //startDate: startDateInp.value.toString(),
+                startDate: (((startDateInp.valueAsDate.getMonth() > 8) ? (startDateInp.valueAsDate.getMonth() + 1) : ('0' + (startDateInp.valueAsDate.getMonth() + 1))) + '/' + ((startDateInp.valueAsDate.getDate() > 9) ? startDateInp.valueAsDate.getDate() : ('0' + startDateInp.valueAsDate.getDate())) + '/' + startDateInp.valueAsDate.getFullYear()),
+                endDate: (((endDateInp.valueAsDate.getMonth() > 8) ? (endDateInp.valueAsDate.getMonth() + 1) : ('0' + (endDateInp.valueAsDate.getMonth() + 1))) + '/' + ((endDateInp.valueAsDate.getDate() > 9) ? endDateInp.valueAsDate.getDate() : ('0' + endDateInp.valueAsDate.getDate())) + '/' + endDateInp.valueAsDate.getFullYear()),
                     city: cityInp.value,
                     location: locationInp.value
-                }
             };
 
 
             const locationsTable = document.getElementById("locationsTable");
-            addRowToTable(locationsTable, newLocation, currentPatientLocations, columnKeys);
+            addRowToTable(locationsTable, newLocation, currentPatient.paths, columnKeys);
 
             //add location to data
-            currentPatientLocations.push(newLocation);
-            locations.push(newLocation);
+            currentPatient.paths.push(newLocation);
+            const response = await updatePatient(currentPatient, "patient");
+            console.log(response);
+
 
         }
 
