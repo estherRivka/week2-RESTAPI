@@ -58,7 +58,7 @@ namespace week2.Controllers
                 }
                return _mapper.Map<PatientModel>(patient);
             }
-            catch (Exception)
+            catch (Exception e)
             {
                 return this.StatusCode(StatusCodes.Status500InternalServerError, "Database Failure while retrieving patient");
             }
@@ -95,7 +95,7 @@ namespace week2.Controllers
                 
 
             }
-            catch (Exception e)
+            catch (Exception)
             {
                 return this.StatusCode(StatusCodes.Status500InternalServerError, "Database Failure while creating new patient");
             }
@@ -104,22 +104,23 @@ namespace week2.Controllers
     
 
         // PUT: api/Path/5
-        [HttpPut("{id:int}")]
-        public ActionResult<PatientModel> Put(int id, PatientModel updatedPatient)
+        [HttpPut]
+        public ActionResult<PatientModel> Put( PatientModel updatedPatient)
         {
             try
             {
                 Patient patientToUpdate = patients
-                    .Find(patient => patient.Id == id);
+                    .Find(patient => patient.Id == updatedPatient.PatientId);
 
+                DateTime x = DateTime.ParseExact(updatedPatient.Paths[0].StartDate, "dd/mm/yyyy", null);
                 if (patientToUpdate == null)
                 {
-                    return NotFound($"patient with id:{id} was not found");
+                    return NotFound($"patient with id:{updatedPatient.PatientId} was not found");
                 }
                 _mapper.Map(updatedPatient, patientToUpdate);
                 return _mapper.Map<PatientModel>(patientToUpdate);
             }
-            catch (Exception)
+            catch (Exception e)
             {
 
                 return this.StatusCode(StatusCodes.Status500InternalServerError, "Database Failure while retrieving patient");
