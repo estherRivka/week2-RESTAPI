@@ -23,6 +23,26 @@ const patientURL = "patient"
 const columnNames = ["Start Date", "End Date", "City", "Location"];
 const columnKeys = ["startDate", "endDate", "city", "location"];
 
+function getLocationsByPatientId(currentPatientId, url) {
+
+    var xhttp = new XMLHttpRequest();
+
+    return new Promise((resolve, reject) => {
+
+        xhttp.onreadystatechange = function () {
+            if (this.readyState == 4 && this.status == 200) {
+                resolve(JSON.parse(this.responseText));
+            }
+            if (this.readyState == 4 && this.status !== 200) {
+                reject("an error accured retrieving data");
+            }
+        }
+        xhttp.open("GET", "patient/1");
+        xhttp.send();
+    });
+
+};
+
 configurePage(columnNames, columnKeys, patientURL)
 function configurePage(columnNames, columnKeys, patientURL ) {
     let currentPatientLocations = [];
@@ -77,33 +97,6 @@ function configurePage(columnNames, columnKeys, patientURL ) {
             return false;
         }
     }
-
-    function getLocationsByPatientId(currentPatientId, url) {
-
-        var xhttp = new XMLHttpRequest();
-
-        return new Promise((resolve, reject) => {
-           
-            xhttp.onreadystatechange = function () {
-                if (this.readyState == 4 && this.status == 200) {
-                    resolve(JSON.parse(this.responseText));
-                }
-                if (this.readyState == 4 && this.status !== 200) {
-                    alert("an error accured");
-                    reject();
-                });
-        
-    });
-
-    var xhttp = new XMLHttpRequest();
-    xhttp.onreadystatechange = function () {
-        if (this.readyState == 4 && this.status == 200) {
-            return (JSON.parse(this.responseText));
-        }
-        if (this.readyState == 4 && this.status !== 200) {
-            alert("an error accured");
-        }
-    };
    
 
     
@@ -239,6 +232,6 @@ function configurePage(columnNames, columnKeys, patientURL ) {
         currentPatientLocations.splice(index - 1, 1);
 
     }
-}
+
 
 
