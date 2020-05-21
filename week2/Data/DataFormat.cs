@@ -10,15 +10,15 @@ namespace week2.Data
     {
         private readonly static List<Patient> patients = new List<Patient>() {
             new Patient() { Id = 1, Paths = new List<Path>() {
-                new Path(){ City = "Jerusalem", StartDate = new DateTime(2019, 12, 20), EndDate = new DateTime(2019, 12, 25), Location = "Library" },
+                new Path(){ City = "Jerusalem", StartDate = new DateTime(2019, 12, 08), EndDate = new DateTime(2019, 12, 09), Location = "Library" },
                 new Path() { City = "Jafa", StartDate = new DateTime(2019, 10, 10), EndDate = new DateTime(2019, 10, 11), Location = "Library" },
-                new Path() { City = "Tzfat", StartDate = new DateTime(2018, 3, 2), EndDate = new DateTime(2018, 3, 5), Location = "Library" }
+                new Path() { City = "Tzfat", StartDate = new DateTime(2018, 03, 02), EndDate = new DateTime(2018, 03, 05), Location = "Library" }
                 },
 
             },
             new Patient() { Id = 2, Paths = new List<Path>() {
-                new Path() { City = "Tel Aviv", StartDate = new DateTime(2018, 12, 20), EndDate = new DateTime(2018, 12, 26), Location = "Library" },
-                new Path() { City = "Tiberias", StartDate = new DateTime(2020, 10, 23), EndDate = new DateTime(2020, 10, 24), Location = "Library" }
+                new Path() { City = "Tel Aviv", StartDate = new DateTime(2018, 12, 08), EndDate = new DateTime(2018, 12, 01), Location = "Library" },
+                new Path() { City = "Tiberias", StartDate = new DateTime(2020, 10, 12), EndDate = new DateTime(2020, 10, 11), Location = "Library" }
 
                 }
             }
