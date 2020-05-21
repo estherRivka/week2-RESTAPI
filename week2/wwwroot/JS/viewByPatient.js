@@ -2,6 +2,9 @@
 const patientURL = "patient"
 const columnNames = ["Start Date", "End Date", "City", "Location"];
 const columnKeys = ["startDate", "endDate", "city", "location"];
+let currentPatient = null;
+
+configurePage(columnNames, columnKeys, patientURL, currentPatient);
 
 function getLocationsByPatientId(currentPatientId, url) {
 
@@ -37,7 +40,7 @@ function updatePatient(updatedPatient, url) {
                 reject("an error accured updating");
             }
         }
-        xhttp.open("PUT", "patient");
+        xhttp.open("PUT", url);
         xhttp.setRequestHeader('Content-Type', 'application/json' );
         xhttp.setRequestHeader('Accept', 'application/json');
         xhttp.send(JSON.stringify(updatedPatient))
@@ -45,9 +48,9 @@ function updatePatient(updatedPatient, url) {
 
 };
 
-let currentPatient = null;
-configurePage(columnNames, columnKeys, patientURL)
-function configurePage(columnNames, columnKeys, patientURL ) {
+
+
+function configurePage(columnNames, columnKeys, patientURL, currentPatient ) {
  
     const patientIdInp = document.getElementById("patientIdInp");
     let patientId;
@@ -67,9 +70,8 @@ function configurePage(columnNames, columnKeys, patientURL ) {
 
     if (viewLocationTableBtn !== null) {
         viewLocationTableBtn.addEventListener("click",async function () {
-            //currentPatientLocations.length = 0;
             currentPatient = await getLocationsByPatientId(patientId, patientURL);
-            buildLocationTable(currentPatient.paths, columnNames, columnKeys);
+            buildLocationTable(currentPatient, columnNames, columnKeys);
             SetViewLocationBtnAvailability(false);
         });
     }
@@ -107,7 +109,7 @@ function configurePage(columnNames, columnKeys, patientURL ) {
        
     
 
-function buildLocationTable(currentPatientLocations, columnNames, columnKeys) {
+function buildLocationTable(currentPatient, columnNames, columnKeys) {
         const columnCount = columnNames.length;
 
         //Get add new location inputs.
@@ -124,7 +126,7 @@ function buildLocationTable(currentPatientLocations, columnNames, columnKeys) {
             headerCell.dataset.id = i;
             headerCell.setAttribute("type", "text");
             headerCell.addEventListener("click", function () {
-                sortLocationTableByColumn(currentPatientLocations, columnNames, columnKeys, i);
+                sortLocationTableByColumn(currentPatient, columnNames, columnKeys, i);
             });
             headerCell.innerHTML = columnNames[i];
             row.appendChild(headerCell);
@@ -135,8 +137,8 @@ function buildLocationTable(currentPatientLocations, columnNames, columnKeys) {
         }
 
       //  Add the data rows.
-        for (let i = 0; i < currentPatientLocations.length; i++) {
-            addRowToTable(table, currentPatientLocations[i], currentPatientLocations, columnKeys);
+    for (let i = 0; i < currentPatient.paths.length; i++) {
+        addRowToTable(table, currentPatient.paths[i], currentPatient, columnKeys);
         }
 
         const tableDv = document.getElementById("tableDv");
@@ -147,7 +149,7 @@ function buildLocationTable(currentPatientLocations, columnNames, columnKeys) {
         document.getElementById("addLocationDv").style.display = "block";
     }
 
-    function addRowToTable(table, newLocation, currentPatientLocations, columnKeys) {
+    function addRowToTable(table, newLocation, currentPatient, columnKeys) {
         const row = table.insertRow(-1);
 
         for (let key of columnKeys) {
@@ -159,17 +161,17 @@ function buildLocationTable(currentPatientLocations, columnNames, columnKeys) {
         deleteBtn.innerHTML = "Delete";
         deleteBtn.addEventListener("click", function () {
            // Send current row to delete function.
-            deleteLocation(currentPatientLocations, row);
+            deleteLocation(currentPatient, row);
         });
         deleteCell.appendChild(deleteBtn);
 
     }
     
-    function sortLocationTableByColumn(currentPatientLocations, columnNames, columnKeys, columnIndex) {
+function sortLocationTableByColumn(currentPatient, columnNames, columnKeys, columnIndex) {
         const sortByKey = columnKeys[columnIndex];
-        currentPatientLocations.sort((a, b) => a[sortByKey].localeCompare(b[sortByKey]));
+        currentPatient.paths.sort((a, b) => a[sortByKey].localeCompare(b[sortByKey]));
 
-        buildLocationTable(currentPatientLocations, columnNames, columnKeys);
+        buildLocationTable(currentPatient, columnNames, columnKeys);
     }
 
 async function addLocation(currentPatient, columnKeys) {
@@ -201,16 +203,15 @@ async function addLocation(currentPatient, columnKeys) {
         }
         else {
             const newLocation = {
-                    //startDate: startDateInp.value.toString(),
                 startDate: (((startDateInp.valueAsDate.getMonth() > 8) ? (startDateInp.valueAsDate.getMonth() + 1) : ('0' + (startDateInp.valueAsDate.getMonth() + 1))) + '/' + ((startDateInp.valueAsDate.getDate() > 9) ? startDateInp.valueAsDate.getDate() : ('0' + startDateInp.valueAsDate.getDate())) + '/' + startDateInp.valueAsDate.getFullYear()),
                 endDate: (((endDateInp.valueAsDate.getMonth() > 8) ? (endDateInp.valueAsDate.getMonth() + 1) : ('0' + (endDateInp.valueAsDate.getMonth() + 1))) + '/' + ((endDateInp.valueAsDate.getDate() > 9) ? endDateInp.valueAsDate.getDate() : ('0' + endDateInp.valueAsDate.getDate())) + '/' + endDateInp.valueAsDate.getFullYear()),
-                    city: cityInp.value,
-                    location: locationInp.value
+                city: cityInp.value,
+                location: locationInp.value
             };
 
 
             const locationsTable = document.getElementById("locationsTable");
-            addRowToTable(locationsTable, newLocation, currentPatient.paths, columnKeys);
+            addRowToTable(locationsTable, newLocation, currentPatient, columnKeys);
 
             //add location to data
             currentPatient.paths.push(newLocation);
@@ -222,7 +223,7 @@ async function addLocation(currentPatient, columnKeys) {
 
     }
 
-    function deleteLocation(currentPatientLocations, rowToDelete) {
+    function deleteLocation(currentPatient, rowToDelete) {
 
 
         //Get all rows from table as array
@@ -232,7 +233,10 @@ async function addLocation(currentPatient, columnKeys) {
         const index = allRows.indexOf(rowToDelete);
         tableBody.removeChild(rowToDelete);
 
-        currentPatientLocations.splice(index - 1, 1);
+        currentPatient.paths.splice(index - 1, 1);
+        
+
+        updatePatient(currentPatient, "patient");
 
     }
 
