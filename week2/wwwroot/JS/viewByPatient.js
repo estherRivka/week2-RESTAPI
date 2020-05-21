@@ -1,25 +1,5 @@
 "use strict";
 const patientURL = "patient"
-//const script = document.createElement('script');
-//script.src = '//code.jquery.com/jquery-1.11.0.min.js';
-//document.getElementsByTagName('head')[0].appendChild(script);
-
-//getDataFromLocalStorage()
-//    .then(configurePage)
-//    .catch(() => { console.log("error retreiving data"); });
-
-//function getDataFromLocalStorage() {
-
-//    return new Promise((success, error) => {
-//        const data = {
-//            locations: JSON.parse(localStorage.getItem('locationsDataset')),
-//            columnNames: JSON.parse(localStorage.getItem('culumnNames')),
-//            columnKeys: JSON.parse(localStorage.getItem('columnKeys'))
-//        };
-//        success(data);
-//    });
-
-//}
 const columnNames = ["Start Date", "End Date", "City", "Location"];
 const columnKeys = ["startDate", "endDate", "city", "location"];
 
@@ -38,7 +18,6 @@ function getLocationsByPatientId(currentPatientId, url) {
             }
         }
         xhttp.open("GET", `${url}/${currentPatientId}`);
-        //xhttp.open("GET", "path/1");
         xhttp.send();
     });
 
