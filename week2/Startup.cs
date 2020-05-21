@@ -28,21 +28,31 @@ namespace week2
         {
             services.AddAutoMapper(typeof(Startup));
             services.AddControllers();
+            services.AddCors(options =>
+            {
+                options.AddPolicy("Policy1",
+                    builder =>
+                    {
+                        builder.WithOrigins("http://localhost:8080",
+                                            "http://www.contoso.com");
+                    });
+
+            });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
+            public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
             }
             app.UseStaticFiles();
-
+            
             app.UseHttpsRedirection();
 
             app.UseRouting();
-
+            app.UseCors("Policy1");
             app.UseAuthorization();
 
             app.UseEndpoints(endpoints =>

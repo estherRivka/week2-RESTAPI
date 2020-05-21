@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 
@@ -22,7 +23,7 @@ namespace week2.Controllers
         {
             _logger = logger;
         }
-
+        [EnableCors("Policy1")]
         [HttpGet]
         public IEnumerable<WeatherForecast> Get()
         {

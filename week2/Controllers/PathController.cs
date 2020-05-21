@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using AutoMapper;
+using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using week2.Data;
@@ -11,6 +12,7 @@ using week2.Models;
 
 namespace week2.Controllers
 {
+    //[EnableCors]
     [Route("[controller]")]
     [ApiController]
     public class PathController : ControllerBase
@@ -22,7 +24,7 @@ namespace week2.Controllers
           
         }
 
-
+        [EnableCors]
         [HttpGet]
 
         public ActionResult<List<PathModel>> Get()

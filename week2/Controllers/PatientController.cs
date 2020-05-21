@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using AutoMapper;
+using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Routing;
@@ -43,6 +44,7 @@ namespace week2.Controllers
 
 
 
+        [EnableCors]
         // GET: api/Path/5
         [HttpGet("{id:int}")]
         public ActionResult<PatientModel> Get(int id)
