@@ -51,10 +51,10 @@ namespace week2.Controllers
                 List<Path> paths = DataFormat.GetAllPaths();
                 if (paths == null || !paths.Any())
                     return NotFound("Couldn't find any paths");
-                List<Path> sortedPath = paths.FindAll(path => path.City == city);
+                List<Path> PathsInCity = paths.FindAll(path => path.City == city);
                 // if (sortedPath != null && !sortedPath.Any())
                 // return NotFound($"Couldn't find any paths in city {city}");
-                return _mapper.Map<List<PathModel>>(sortedPath);
+                return _mapper.Map<List<PathModel>>(PathsInCity);
             }
             catch (Exception)
             {
